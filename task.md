@@ -7,7 +7,7 @@
 
 ## 📌 สถานะปัจจุบัน (Current Status)
 
-- **Active Branch:** `feature/logging`
+- **Active Branch:** `main` (Merged `feature/logging`)
 - **Current Phase:** Phase 5 Completed / Ready for Phase 6
 - **Build Status:** Passing (`gcc -std=c11 -Wall -Wextra -Wpedantic -O2`)
 - **Test Status:** 18/18 Unit, Detector, Simulator, Launcher & Logger Tests Passing
