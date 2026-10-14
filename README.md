@@ -381,7 +381,7 @@ processes based only on a suspicious name.
 ## Development Roadmap
 
 - [x] Phase 1: Process Scanner
-- [ ] Phase 2: Cheat Detection Engine
+- [x] Phase 2: Cheat Detection Engine
 - [ ] Phase 3: Game Simulator
 - [ ] Phase 4: Cheat Simulator
 - [ ] Phase 5: Real-time Monitoring

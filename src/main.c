@@ -3,17 +3,20 @@
 #include <string.h>
 #include <stdbool.h>
 #include "process_scanner.h"
+#include "cheat_detector.h"
 
 static void print_banner(void) {
     printf("====================================\n");
-    printf("       MINI ANTI-CHEAT v0.1         \n");
-    printf("         PROCESS SCANNER            \n");
+    printf("       MINI ANTI-CHEAT v0.2         \n");
+    printf("   PROCESS SCANNER & CHEAT DETECTOR \n");
     printf("====================================\n\n");
 }
 
 static void print_usage(const char *prog_name) {
     printf("Usage: %s [OPTIONS]\n\n", prog_name);
     printf("Options:\n");
+    printf("  --detect            Run cheat detection engine on scanned processes\n");
+    printf("  --alerts-only       Display only SUSPICIOUS and CONFIRMED_CHEAT processes\n");
     printf("  --zombies           Filter and display only zombie processes\n");
     printf("  --proc-dir <dir>    Custom /proc directory path (for testing)\n");
     printf("  -h, --help          Show this help message\n");
@@ -32,13 +35,33 @@ static void print_process_table(const ProcessList *list) {
     printf("\n");
 }
 
+static void print_detection_table(const DetectionResultList *list) {
+    printf("%-8s %-20s %-16s %s\n", "PID", "NAME", "STATUS", "REASON");
+    printf("--------------------------------------------------------------------------------\n");
+    for (size_t i = 0; i < list->count; i++) {
+        printf("%-8d %-20.20s %-16s %s\n",
+               (int)list->items[i].pid,
+               list->items[i].name,
+               detection_status_to_string(list->items[i].status),
+               list->items[i].reason);
+    }
+    printf("\n");
+}
+
 int main(int argc, char *argv[]) {
     bool filter_zombies = false;
+    bool run_detection = false;
+    bool alerts_only = false;
     const char *custom_proc_dir = NULL;
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--zombies") == 0) {
             filter_zombies = true;
+        } else if (strcmp(argv[i], "--detect") == 0) {
+            run_detection = true;
+        } else if (strcmp(argv[i], "--alerts-only") == 0) {
+            run_detection = true;
+            alerts_only = true;
         } else if (strcmp(argv[i], "--proc-dir") == 0) {
             if (i + 1 < argc) {
                 custom_proc_dir = argv[++i];
@@ -72,7 +95,45 @@ int main(int argc, char *argv[]) {
 
     process_list_sort_by_pid(&all_procs);
 
-    if (filter_zombies) {
+    if (run_detection) {
+        DetectionResultList detection_results;
+        detection_result_list_init(&detection_results);
+
+        if (detect_cheats(&all_procs, &detection_results) != 0) {
+            fprintf(stderr, "Error running detection engine.\n");
+            detection_result_list_free(&detection_results);
+            process_list_free(&all_procs);
+            return 1;
+        }
+
+        size_t count_normal = 0;
+        size_t count_suspicious = 0;
+        size_t count_confirmed = 0;
+
+        for (size_t i = 0; i < detection_results.count; i++) {
+            if (detection_results.items[i].status == DETECTION_NORMAL) count_normal++;
+            else if (detection_results.items[i].status == DETECTION_SUSPICIOUS) count_suspicious++;
+            else if (detection_results.items[i].status == DETECTION_CONFIRMED_CHEAT) count_confirmed++;
+        }
+
+        if (alerts_only) {
+            DetectionResultList alerts;
+            detection_result_list_init(&alerts);
+            filter_suspicious_or_cheats(&detection_results, &alerts);
+            print_detection_table(&alerts);
+            printf("Total scanned: %zu\n", all_procs.count);
+            printf("Alerts displayed: %zu (Suspicious: %zu, Confirmed Cheat: %zu)\n",
+                   alerts.count, count_suspicious, count_confirmed);
+            detection_result_list_free(&alerts);
+        } else {
+            print_detection_table(&detection_results);
+            printf("Total scanned: %zu\n", all_procs.count);
+            printf("Summary: Normal: %zu | Suspicious: %zu | Confirmed Cheat: %zu\n",
+                   count_normal, count_suspicious, count_confirmed);
+        }
+
+        detection_result_list_free(&detection_results);
+    } else if (filter_zombies) {
         ProcessList zombie_procs;
         process_list_init(&zombie_procs);
         if (filter_processes_by_state(&all_procs, &zombie_procs, 'Z') == 0) {

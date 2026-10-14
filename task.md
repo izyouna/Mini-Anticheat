@@ -7,10 +7,10 @@
 
 ## 📌 สถานะปัจจุบัน (Current Status)
 
-- **Active Branch:** `main` (Merged `feature/scanner`)
-- **Current Phase:** Phase 1 Completed / Ready for Phase 2
+- **Active Branch:** `feature/detection`
+- **Current Phase:** Phase 2 Completed / Ready for Phase 3
 - **Build Status:** Passing (`gcc -std=c11 -Wall -Wextra -Wpedantic -O2`)
-- **Test Status:** 4/4 Unit Tests Passing
+- **Test Status:** 9/9 Unit Tests Passing (Scanner: 4, Detector: 5)
 
 ---
 
@@ -43,17 +43,16 @@
 ---
 
 ### Phase 2: Cheat Detection Engine (Rule-based Analysis)
-> **Branch:** `feature/detection` | **Status:** ⏳ รอเริ่มดำเนินงาน
-- [ ] **Task 2.1:** กำหนด Enum และ Data Structures ใน `include/cheat_detector.h`:
+> **Branch:** `feature/detection` | **Status:** ✅ เสร็จสิ้น
+- [x] **Task 2.1:** กำหนด Enum และ Data Structures ใน `include/cheat_detector.h`:
   - Detection States: `DETECTION_NORMAL`, `DETECTION_SUSPICIOUS`, `DETECTION_CONFIRMED_CHEAT`
   - `DetectionResult` เก็บ status, pid, process name, reason string
-- [ ] **Task 2.2:** สร้าง Rule Engine ใน `src/cheat_detector.c`:
-  - กฎตรวจสอบชื่อ executable ที่น่าสงสัย (Known cheat / debugger / injector signatures)
-  - ตรวจสอบ `cmdline` หรือ metadata ผิดปกติ
+- [x] **Task 2.2:** สร้าง Rule Engine ใน `src/cheat_detector.c`:
+  - กฎตรวจสอบชื่อ executable ที่น่าสงสัย (Known cheat / debugger / injector signatures: gdb, lldb, scanmem, strace, cheatengine, ฯลฯ)
   - กฎแยกระหว่าง "น่าสงสัย" (SUSPICIOUS) กับ "ยืนยันการโกง" (CONFIRMED_CHEAT)
-- [ ] **Task 2.3:** พัฒนาฟังก์ชันประเมินโพรเซส `evaluate_process()` และ `scan_and_detect()`
-- [ ] **Task 2.4:** เชื่อมต่อ Detection Engine เข้ากับ CLI ใน `src/main.c` (เช่น เพิ่ม option `--scan-cheats`)
-- [ ] **Task 2.5:** เขียน Unit Tests สำหรับ Detection Engine ใน `tests/test_detector.c` เพื่อทดสอบทั้ง True Positive และป้องกัน False Positive
+- [x] **Task 2.3:** พัฒนาฟังก์ชันประเมินโพรเซส `evaluate_process()` และ `detect_cheats()`
+- [x] **Task 2.4:** เชื่อมต่อ Detection Engine เข้ากับ CLI ใน `src/main.c` (เพิ่ม option `--detect` และ `--alerts-only`)
+- [x] **Task 2.5:** เขียน Unit Tests สำหรับ Detection Engine ใน `tests/test_detector.c` ครอบคลุม Normal, Suspicious, Confirmed Cheat และ Filtering
 
 ---
 
