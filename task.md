@@ -7,7 +7,7 @@
 
 ## 📌 สถานะปัจจุบัน (Current Status)
 
-- **Active Branch:** `feature/game`
+- **Active Branch:** `main` (Merged `feature/game`)
 - **Current Phase:** Phase 3 Completed / Ready for Phase 4
 - **Build Status:** Passing (`gcc -std=c11 -Wall -Wextra -Wpedantic -O2`)
 - **Test Status:** 12/12 Unit & Simulator Tests Passing (Scanner: 4, Detector: 5, Simulator: 3)
