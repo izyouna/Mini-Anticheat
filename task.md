@@ -7,7 +7,7 @@
 
 ## 📌 สถานะปัจจุบัน (Current Status)
 
-- **Active Branch:** `feature/scanner`
+- **Active Branch:** `main` (Merged `feature/scanner`)
 - **Current Phase:** Phase 1 Completed / Ready for Phase 2
 - **Build Status:** Passing (`gcc -std=c11 -Wall -Wextra -Wpedantic -O2`)
 - **Test Status:** 4/4 Unit Tests Passing
