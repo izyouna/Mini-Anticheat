@@ -1,0 +1,32 @@
+
+# Compiled binaries
+anticheat
+game
+cheat_test
+*.o
+*.out
+*.so
+*.a
+
+# Build directories
+build/
+bin/
+
+# Logs
+logs/*.log
+
+# Debugging
+core
+core.*
+
+# Editor settings
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# Temporary files
+*.tmp
+*.swp
+*~
