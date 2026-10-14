@@ -380,7 +380,7 @@ processes based only on a suspicious name.
 
 ## Development Roadmap
 
-- [ ] Phase 1: Process Scanner
+- [x] Phase 1: Process Scanner
 - [ ] Phase 2: Cheat Detection Engine
 - [ ] Phase 3: Game Simulator
 - [ ] Phase 4: Cheat Simulator
