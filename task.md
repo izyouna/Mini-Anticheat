@@ -7,7 +7,7 @@
 
 ## 📌 สถานะปัจจุบัน (Current Status)
 
-- **Active Branch:** `feature/launcher`
+- **Active Branch:** `main` (Merged `feature/launcher`)
 - **Current Phase:** Phase 4 Completed / Ready for Phase 5
 - **Build Status:** Passing (`gcc -std=c11 -Wall -Wextra -Wpedantic -O2`)
 - **Test Status:** 15/15 Unit, Detector, Simulator & Launcher Tests Passing
