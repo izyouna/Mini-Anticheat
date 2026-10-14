@@ -7,6 +7,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 #include "game_launcher.h"
+#include "logger.h"
 
 void game_process_init(GameProcess *game) {
     if (!game) return;
@@ -169,12 +170,13 @@ int terminate_game(GameProcess *game, int sig) {
     return 0;
 }
 
-int monitor_game_session(GameProcess *game, int scan_interval_ms, int max_ticks, const char *proc_dir) {
+int monitor_game_session(GameProcess *game, int scan_interval_ms, int max_ticks, const char *proc_dir, bool auto_protect) {
     if (!game) return -1;
 
     printf("[MONITOR] Starting real-time monitoring session for game (PID: %d)...\n", (int)game->pid);
     char ipc_buffer[512];
     int ticks = 0;
+    bool terminated_for_protection = false;
 
     while (check_game_status(game)) {
         ticks++;
@@ -202,15 +204,35 @@ int monitor_game_session(GameProcess *game, int scan_interval_ms, int max_ticks,
                     if (detections.items[i].status == DETECTION_CONFIRMED_CHEAT) {
                         printf("\033[1;31m[ALERT] CONFIRMED CHEAT DETECTED!\033[0m Process '%s' (PID: %d) - %s\n",
                                detections.items[i].name, (int)detections.items[i].pid, detections.items[i].reason);
+
+                        log_event("CONFIRMED_CHEAT", detections.items[i].pid,
+                                  detections.items[i].name, detections.items[i].reason);
+
+                        if (auto_protect) {
+                            printf("\033[1;31m[PROTECTION] Confirmed cheat active! Safely terminating controlled game process (PID: %d)...\033[0m\n",
+                                   (int)game->pid);
+                            log_event("PROTECTION_ACTION", game->pid, "game",
+                                      "Terminated controlled game to protect session");
+                            terminate_game(game, SIGTERM);
+                            terminated_for_protection = true;
+                            break;
+                        }
                     } else if (detections.items[i].status == DETECTION_SUSPICIOUS) {
                         printf("\033[1;33m[ALERT] SUSPICIOUS PROCESS:\033[0m '%s' (PID: %d) - %s\n",
                                detections.items[i].name, (int)detections.items[i].pid, detections.items[i].reason);
+
+                        log_event("SUSPICIOUS", detections.items[i].pid,
+                                  detections.items[i].name, detections.items[i].reason);
                     }
                 }
             }
             detection_result_list_free(&detections);
         }
         process_list_free(&procs);
+
+        if (terminated_for_protection) {
+            break;
+        }
 
         if (max_ticks > 0 && ticks >= max_ticks) {
             printf("[MONITOR] Max monitoring ticks (%d) reached.\n", max_ticks);
@@ -220,6 +242,10 @@ int monitor_game_session(GameProcess *game, int scan_interval_ms, int max_ticks,
         usleep((useconds_t)scan_interval_ms * 1000);
     }
 
-    printf("[MONITOR] Game process finished (Exit code: %d).\n", game->exit_code);
+    if (terminated_for_protection) {
+        printf("[MONITOR] Session terminated under Protection Policy.\n");
+    } else {
+        printf("[MONITOR] Game process finished (Exit code: %d).\n", game->exit_code);
+    }
     return 0;
 }

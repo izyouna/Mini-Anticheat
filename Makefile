@@ -10,7 +10,8 @@ SIM_DIR = simulator
 SCANNER_SRCS = $(SRC_DIR)/process_scanner.c
 DETECTOR_SRCS = $(SRC_DIR)/cheat_detector.c
 LAUNCHER_SRCS = $(SRC_DIR)/game_launcher.c
-CORE_SRCS = $(SCANNER_SRCS) $(DETECTOR_SRCS) $(LAUNCHER_SRCS)
+LOGGER_SRCS = $(SRC_DIR)/logger.c
+CORE_SRCS = $(SCANNER_SRCS) $(DETECTOR_SRCS) $(LAUNCHER_SRCS) $(LOGGER_SRCS)
 MAIN_SRCS = $(SRC_DIR)/main.c $(CORE_SRCS)
 MAIN_OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(MAIN_SRCS))
 
@@ -22,6 +23,7 @@ TEST_SCANNER_BIN = $(BUILD_DIR)/test_scanner
 TEST_DETECTOR_BIN = $(BUILD_DIR)/test_detector
 TEST_SIMULATOR_BIN = $(BUILD_DIR)/test_simulators
 TEST_LAUNCHER_BIN = $(BUILD_DIR)/test_launcher
+TEST_LOGGER_BIN = $(BUILD_DIR)/test_logger
 
 .PHONY: all clean test
 
@@ -42,7 +44,7 @@ $(GAME_TARGET): $(SIM_DIR)/game.c
 $(CHEAT_TARGET): $(SIM_DIR)/cheat_test.c
 	$(CC) $(CFLAGS) $< -o $@
 
-test: $(TEST_SCANNER_BIN) $(TEST_DETECTOR_BIN) $(TEST_SIMULATOR_BIN) $(TEST_LAUNCHER_BIN) $(GAME_TARGET) $(CHEAT_TARGET)
+test: $(TEST_SCANNER_BIN) $(TEST_DETECTOR_BIN) $(TEST_SIMULATOR_BIN) $(TEST_LAUNCHER_BIN) $(TEST_LOGGER_BIN) $(GAME_TARGET) $(CHEAT_TARGET)
 	@echo "Running Process Scanner tests..."
 	@./$(TEST_SCANNER_BIN)
 	@echo ""
@@ -54,6 +56,9 @@ test: $(TEST_SCANNER_BIN) $(TEST_DETECTOR_BIN) $(TEST_SIMULATOR_BIN) $(TEST_LAUN
 	@echo ""
 	@echo "Running Game Launcher tests..."
 	@./$(TEST_LAUNCHER_BIN)
+	@echo ""
+	@echo "Running Logger tests..."
+	@./$(TEST_LOGGER_BIN)
 
 $(TEST_SCANNER_BIN): $(TEST_DIR)/test_scanner.c $(SCANNER_SRCS) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $^ -o $@
@@ -66,6 +71,9 @@ $(TEST_SIMULATOR_BIN): $(TEST_DIR)/test_simulators.c $(CORE_SRCS) | $(BUILD_DIR)
 
 $(TEST_LAUNCHER_BIN): $(TEST_DIR)/test_launcher.c $(CORE_SRCS) $(GAME_TARGET) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(TEST_DIR)/test_launcher.c $(CORE_SRCS) -o $@
+
+$(TEST_LOGGER_BIN): $(TEST_DIR)/test_logger.c $(CORE_SRCS) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(TEST_DIR)/test_logger.c $(CORE_SRCS) -o $@
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET) $(GAME_TARGET) $(CHEAT_TARGET)

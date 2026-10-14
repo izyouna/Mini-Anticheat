@@ -7,10 +7,10 @@
 
 ## 📌 สถานะปัจจุบัน (Current Status)
 
-- **Active Branch:** `main` (Merged `feature/launcher`)
-- **Current Phase:** Phase 4 Completed / Ready for Phase 5
+- **Active Branch:** `feature/logging`
+- **Current Phase:** Phase 5 Completed / Ready for Phase 6
 - **Build Status:** Passing (`gcc -std=c11 -Wall -Wextra -Wpedantic -O2`)
-- **Test Status:** 15/15 Unit, Detector, Simulator & Launcher Tests Passing
+- **Test Status:** 18/18 Unit, Detector, Simulator, Launcher & Logger Tests Passing
 
 ---
 
@@ -80,14 +80,15 @@
 ---
 
 ### Phase 5: Event Logging & Controlled Protection
-> **Branch:** `feature/logging` | **Status:** ⏳ รอเริ่มดำเนินงาน
-- [ ] **Task 5.1:** พัฒนาระบบ Logger ใน `include/logger.h` และ `src/logger.c`:
+> **Branch:** `feature/logging` | **Status:** ✅ เสร็จสิ้น
+- [x] **Task 5.1:** พัฒนาระบบ Logger ใน `include/logger.h` และ `src/logger.c`:
   - บันทึก Timestamp, Event Type, Target PID, Name, Reason ลงใน `logs/anticheat.log`
   - ใช้ System Calls `open()`, `write()`, `close()` อย่างรัดกุม
-- [ ] **Task 5.2:** พัฒนากลไก Safe Process Termination:
+- [x] **Task 5.2:** พัฒนากลไก Safe Process Termination:
   - ส่งสัญญาณ `kill(child_pid, SIGTERM)` **เฉพาะ Game Child Process ที่ Anti-cheat เป็นเจ้าของเท่านั้น**
   - ห้าม terminate process อื่นในระบบโดยเด็ดขาดตาม Security Policy
-- [ ] **Task 5.3:** จัดการเก็บกวาดสถานะ child process ที่ถูก terminate เพื่อป้องกัน Zombie process
+- [x] **Task 5.3:** จัดการเก็บกวาดสถานะ child process ที่ถูก terminate เพื่อป้องกัน Zombie process
+- [x] **Task 5.4:** เพิ่มตัวเลือก `--protect` และ `--log <path>` ใน CLI `src/main.c`
 
 ---
 

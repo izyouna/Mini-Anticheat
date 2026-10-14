@@ -5,11 +5,12 @@
 #include "process_scanner.h"
 #include "cheat_detector.h"
 #include "game_launcher.h"
+#include "logger.h"
 
 static void print_banner(void) {
     printf("====================================\n");
-    printf("       MINI ANTI-CHEAT v0.3         \n");
-    printf(" MONITORING, SCANNER & CHEAT ENGINE \n");
+    printf("       MINI ANTI-CHEAT v0.4         \n");
+    printf(" MONITORING, DETECTION & PROTECTION \n");
     printf("====================================\n\n");
 }
 
@@ -17,6 +18,8 @@ static void print_usage(const char *prog_name) {
     printf("Usage: %s [OPTIONS]\n\n", prog_name);
     printf("Options:\n");
     printf("  --launch            Launch game simulator and monitor in real-time\n");
+    printf("  --protect           Auto-terminate controlled game if confirmed cheat is detected\n");
+    printf("  --log <path>        Custom log file path (default: logs/anticheat.log)\n");
     printf("  --detect            Run cheat detection engine on scanned processes\n");
     printf("  --alerts-only       Display only SUSPICIOUS and CONFIRMED_CHEAT processes\n");
     printf("  --zombies           Filter and display only zombie processes\n");
@@ -57,13 +60,24 @@ int main(int argc, char *argv[]) {
     bool run_detection = false;
     bool alerts_only = false;
     bool launch_mode = false;
+    bool protect_mode = false;
     int interval_ms = 1000;
     int max_ticks = 0;
     const char *custom_proc_dir = NULL;
+    const char *log_path = DEFAULT_LOG_FILE;
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--launch") == 0) {
             launch_mode = true;
+        } else if (strcmp(argv[i], "--protect") == 0) {
+            protect_mode = true;
+        } else if (strcmp(argv[i], "--log") == 0) {
+            if (i + 1 < argc) {
+                log_path = argv[++i];
+            } else {
+                fprintf(stderr, "Error: --log requires a filepath\n");
+                return 1;
+            }
         } else if (strcmp(argv[i], "--zombies") == 0) {
             filter_zombies = true;
         } else if (strcmp(argv[i], "--detect") == 0) {
@@ -98,22 +112,40 @@ int main(int argc, char *argv[]) {
 
     print_banner();
 
+    /* Initialize logger (creates log file or appends) */
+    if (logger_init(log_path) == 0) {
+        printf("[LOGGER] Initialized logging to: %s\n", log_path);
+    } else {
+        /* Non-fatal: if logs directory does not exist or permission denied */
+        fprintf(stderr, "[LOGGER] Notice: Could not open log file %s (file logging disabled).\n", log_path);
+    }
+
     const char *target_proc_dir = custom_proc_dir ? custom_proc_dir : DEFAULT_PROC_DIR;
 
     if (launch_mode) {
         printf("[LAUNCHER] Launching controlled Game Simulator (./game)...\n");
+        if (protect_mode) {
+            printf("[PROTECTION] Active Protection Policy ENABLED: Game will be safely terminated if confirmed cheat is detected.\n");
+        }
+
         GameProcess game;
         game_process_init(&game);
         char *game_argv[] = { "./game", NULL };
 
         if (launch_game(&game, "./game", game_argv) != 0) {
             fprintf(stderr, "Error: Failed to launch game process (./game).\n");
+            logger_close();
             return 1;
         }
 
         printf("[LAUNCHER] Game successfully launched with PID: %d\n", (int)game.pid);
-        monitor_game_session(&game, interval_ms, max_ticks, target_proc_dir);
+        log_event("GAME_LAUNCH", game.pid, "game", "Controlled game simulator launched");
+
+        monitor_game_session(&game, interval_ms, max_ticks, target_proc_dir, protect_mode);
+
+        log_event("GAME_EXIT", game.pid, "game", "Game process ended");
         game_process_cleanup(&game);
+        logger_close();
         return 0;
     }
 
@@ -125,6 +157,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Note: Mini Anti-Cheat requires the Linux /proc filesystem.\n");
         fprintf(stderr, "Please run on Ubuntu Linux, Ubuntu VM (UTM), or WSL2.\n");
         process_list_free(&all_procs);
+        logger_close();
         return 1;
     }
 
@@ -138,6 +171,7 @@ int main(int argc, char *argv[]) {
             fprintf(stderr, "Error running detection engine.\n");
             detection_result_list_free(&detection_results);
             process_list_free(&all_procs);
+            logger_close();
             return 1;
         }
 
@@ -146,9 +180,16 @@ int main(int argc, char *argv[]) {
         size_t count_confirmed = 0;
 
         for (size_t i = 0; i < detection_results.count; i++) {
-            if (detection_results.items[i].status == DETECTION_NORMAL) count_normal++;
-            else if (detection_results.items[i].status == DETECTION_SUSPICIOUS) count_suspicious++;
-            else if (detection_results.items[i].status == DETECTION_CONFIRMED_CHEAT) count_confirmed++;
+            DetectionResult *item = &detection_results.items[i];
+            if (item->status == DETECTION_NORMAL) {
+                count_normal++;
+            } else if (item->status == DETECTION_SUSPICIOUS) {
+                count_suspicious++;
+                log_event("SUSPICIOUS", item->pid, item->name, item->reason);
+            } else if (item->status == DETECTION_CONFIRMED_CHEAT) {
+                count_confirmed++;
+                log_event("CONFIRMED_CHEAT", item->pid, item->name, item->reason);
+            }
         }
 
         if (alerts_only) {
@@ -186,5 +227,6 @@ int main(int argc, char *argv[]) {
     }
 
     process_list_free(&all_procs);
+    logger_close();
     return 0;
 }

@@ -56,10 +56,11 @@ void game_process_cleanup(GameProcess *game);
  * Run real-time monitoring loop:
  * Monitors game status, reads IPC events, scans processes periodically,
  * and detects cheats.
+ * If auto_protect is true, safely terminates the controlled game when a confirmed cheat is detected.
  * If max_ticks > 0, stops after max_ticks iterations.
  * If proc_dir is NULL, uses DEFAULT_PROC_DIR.
  * Returns 0 on normal game exit, or -1 on error.
  */
-int monitor_game_session(GameProcess *game, int scan_interval_ms, int max_ticks, const char *proc_dir);
+int monitor_game_session(GameProcess *game, int scan_interval_ms, int max_ticks, const char *proc_dir, bool auto_protect);
 
 #endif /* GAME_LAUNCHER_H */
