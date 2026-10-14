@@ -7,7 +7,7 @@
 
 ## 📌 สถานะปัจจุบัน (Current Status)
 
-- **Active Branch:** `feature/docs-demo`
+- **Active Branch:** `main` (All Phases & Features Merged)
 - **Current Phase:** All Phases Completed! (Ready for University Live Demo)
 - **Build Status:** Passing (`gcc -std=c11 -Wall -Wextra -Wpedantic -O2`)
 - **Test Status:** 18/18 Unit Tests + 10/10 Integration Tests Passing (100%)
