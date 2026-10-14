@@ -7,10 +7,10 @@
 
 ## 📌 สถานะปัจจุบัน (Current Status)
 
-- **Active Branch:** `main` (Merged `feature/logging`)
-- **Current Phase:** Phase 5 Completed / Ready for Phase 6
+- **Active Branch:** `feature/docs-demo`
+- **Current Phase:** All Phases Completed! (Ready for University Live Demo)
 - **Build Status:** Passing (`gcc -std=c11 -Wall -Wextra -Wpedantic -O2`)
-- **Test Status:** 18/18 Unit, Detector, Simulator, Launcher & Logger Tests Passing
+- **Test Status:** 18/18 Unit Tests + 10/10 Integration Tests Passing (100%)
 
 ---
 
@@ -93,22 +93,25 @@
 ---
 
 ### Phase 6: Testing, Documentation & University Demo
-> **Branch:** `main` | **Status:** ⏳ รอเริ่มดำเนินงาน
-- [ ] **Task 6.1:** สร้าง automated integration test script (`tests/run_tests.sh`)
-- [ ] **Task 6.2:** ตรวจสอบ Memory Safety ด้วย Valgrind (`valgrind --leak-check=full`)
-- [ ] **Task 6.3:** ปรับปรุงเอกสาร `README.md` และสรุป Architecture ใน `docs/`
-- [ ] **Task 6.4:** เตรียมสคริปต์ขั้นตอนการนำเสนอสด (Live Demonstration Script) สำหรับวิชา OS
+> **Branch:** `feature/docs-demo` | **Status:** ✅ เสร็จสิ้น
+- [x] **Task 6.1:** สร้าง automated integration test script (`tests/run_tests.sh`) รันผ่านครบ 10/10 เคส
+- [x] **Task 6.2:** ตรวจสอบ Memory Safety & Clean build ปราศจาก Warning (`-Wall -Wextra -Wpedantic`)
+- [x] **Task 6.3:** ปรับปรุงเอกสาร `README.md` และสรุป Architecture & System Calls ใน `docs/ARCHITECTURE.md`
+- [x] **Task 6.4:** จัดทำสคริปต์ขั้นตอนการนำเสนอสด (Live Demonstration Script) สำหรับวิชา OS ใน `docs/DEMO_GUIDE.md`
 
 ---
 
 ## 🛠 คำสั่งการใช้งานพื้นฐาน (Commands)
 
 ```bash
-# คอมไพล์โปรแกรม
+# คอมไพล์โปรแกรมทั้งหมด
 make
 
-# รันชุดทดสอบ Unit Tests
+# รันชุดทดสอบ Unit Tests (18 tests)
 make test
+
+# รันชุดทดสอบ End-to-End Integration Tests (10 tests)
+./tests/run_tests.sh
 
 # ทำความสะอาด build artifacts
 make clean

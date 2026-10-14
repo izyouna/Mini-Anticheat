@@ -386,7 +386,7 @@ processes based only on a suspicious name.
 - [x] Phase 4: Cheat Simulator
 - [x] Phase 5: Real-time Monitoring
 - [x] Phase 6: Logging and Game Protection
-- [ ] Phase 7: Testing and Documentation
+- [x] Phase 7: Testing and Documentation
 
 Update this checklist when features are completed
 and tested.
@@ -399,6 +399,18 @@ Compile the project:
 
 ```bash
 make
+```
+
+Run all unit test suites (18 unit tests):
+
+```bash
+make test
+```
+
+Run automated end-to-end integration test suite:
+
+```bash
+./tests/run_tests.sh
 ```
 
 Run the scanner:
@@ -419,8 +431,10 @@ Clean generated binaries:
 make clean
 ```
 
-Additional automated tests will be introduced
-during development.
+For a comprehensive presentation script and architecture guide, see:
+- [System Architecture & System Calls Guide](docs/ARCHITECTURE.md)
+- [Live University Demonstration Script](docs/DEMO_GUIDE.md)
+- [Task Implementation Checklist](task.md)
 
 ---
 
