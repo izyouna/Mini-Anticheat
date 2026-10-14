@@ -7,10 +7,10 @@
 
 ## 📌 สถานะปัจจุบัน (Current Status)
 
-- **Active Branch:** `main` (Merged `feature/detection`)
-- **Current Phase:** Phase 2 Completed / Ready for Phase 3
+- **Active Branch:** `feature/game`
+- **Current Phase:** Phase 3 Completed / Ready for Phase 4
 - **Build Status:** Passing (`gcc -std=c11 -Wall -Wextra -Wpedantic -O2`)
-- **Test Status:** 9/9 Unit Tests Passing (Scanner: 4, Detector: 5)
+- **Test Status:** 12/12 Unit & Simulator Tests Passing (Scanner: 4, Detector: 5, Simulator: 3)
 
 ---
 
@@ -57,13 +57,15 @@
 ---
 
 ### Phase 3: Game & Cheat Simulators
-> **Branch:** `feature/game` | **Status:** ⏳ รอเริ่มดำเนินงาน
-- [ ] **Task 3.1:** พัฒนาเกมจำลอง CLI ใน `simulator/game.c`:
+> **Branch:** `feature/game` | **Status:** ✅ เสร็จสิ้น
+- [x] **Task 3.1:** พัฒนาเกมจำลอง CLI ใน `simulator/game.c`:
   - Game state: `health` (100), `score` (0), `ticks`
   - Event loop จำลองการเล่นและพิมพ์ log สถานะ
-- [ ] **Task 3.2:** พัฒนาโปรแกรมจำลองการโกงใน `simulator/cheat_test.c`:
+  - รองรับ `--ticks <N>`, `--interval <ms>`, `--ipc-fd <fd>`, และสัญญาณ `SIGTERM`/`SIGINT`
+- [x] **Task 3.2:** พัฒนาโปรแกรมจำลองการโกงใน `simulator/cheat_test.c`:
   - จำลองพฤติกรรมผิดปกติสำหรับทดสอบตรวจจับใน controlled environment
-- [ ] **Task 3.3:** อัปเดต `Makefile` ให้ build targets: `game` และ `cheat_test`
+  - รองรับ `--target <pid>`, `--duration <sec>`, `--mode <type>`, และสัญญาณ `SIGTERM`/`SIGINT`
+- [x] **Task 3.3:** อัปเดต `Makefile` ให้ build targets: `game` และ `cheat_test` พร้อมชุดทดสอบ `tests/test_simulators.c`
 
 ---
 
