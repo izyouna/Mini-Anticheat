@@ -4,20 +4,24 @@
 #include <stdbool.h>
 #include "process_scanner.h"
 #include "cheat_detector.h"
+#include "game_launcher.h"
 
 static void print_banner(void) {
     printf("====================================\n");
-    printf("       MINI ANTI-CHEAT v0.2         \n");
-    printf("   PROCESS SCANNER & CHEAT DETECTOR \n");
+    printf("       MINI ANTI-CHEAT v0.3         \n");
+    printf(" MONITORING, SCANNER & CHEAT ENGINE \n");
     printf("====================================\n\n");
 }
 
 static void print_usage(const char *prog_name) {
     printf("Usage: %s [OPTIONS]\n\n", prog_name);
     printf("Options:\n");
+    printf("  --launch            Launch game simulator and monitor in real-time\n");
     printf("  --detect            Run cheat detection engine on scanned processes\n");
     printf("  --alerts-only       Display only SUSPICIOUS and CONFIRMED_CHEAT processes\n");
     printf("  --zombies           Filter and display only zombie processes\n");
+    printf("  --interval <ms>     Monitoring interval in milliseconds (default: 1000)\n");
+    printf("  --max-ticks <N>     Maximum monitoring iterations (default: infinite)\n");
     printf("  --proc-dir <dir>    Custom /proc directory path (for testing)\n");
     printf("  -h, --help          Show this help message\n");
 }
@@ -52,16 +56,29 @@ int main(int argc, char *argv[]) {
     bool filter_zombies = false;
     bool run_detection = false;
     bool alerts_only = false;
+    bool launch_mode = false;
+    int interval_ms = 1000;
+    int max_ticks = 0;
     const char *custom_proc_dir = NULL;
 
     for (int i = 1; i < argc; i++) {
-        if (strcmp(argv[i], "--zombies") == 0) {
+        if (strcmp(argv[i], "--launch") == 0) {
+            launch_mode = true;
+        } else if (strcmp(argv[i], "--zombies") == 0) {
             filter_zombies = true;
         } else if (strcmp(argv[i], "--detect") == 0) {
             run_detection = true;
         } else if (strcmp(argv[i], "--alerts-only") == 0) {
             run_detection = true;
             alerts_only = true;
+        } else if (strcmp(argv[i], "--interval") == 0) {
+            if (i + 1 < argc) {
+                interval_ms = atoi(argv[++i]);
+            }
+        } else if (strcmp(argv[i], "--max-ticks") == 0) {
+            if (i + 1 < argc) {
+                max_ticks = atoi(argv[++i]);
+            }
         } else if (strcmp(argv[i], "--proc-dir") == 0) {
             if (i + 1 < argc) {
                 custom_proc_dir = argv[++i];
@@ -81,10 +98,28 @@ int main(int argc, char *argv[]) {
 
     print_banner();
 
+    const char *target_proc_dir = custom_proc_dir ? custom_proc_dir : DEFAULT_PROC_DIR;
+
+    if (launch_mode) {
+        printf("[LAUNCHER] Launching controlled Game Simulator (./game)...\n");
+        GameProcess game;
+        game_process_init(&game);
+        char *game_argv[] = { "./game", NULL };
+
+        if (launch_game(&game, "./game", game_argv) != 0) {
+            fprintf(stderr, "Error: Failed to launch game process (./game).\n");
+            return 1;
+        }
+
+        printf("[LAUNCHER] Game successfully launched with PID: %d\n", (int)game.pid);
+        monitor_game_session(&game, interval_ms, max_ticks, target_proc_dir);
+        game_process_cleanup(&game);
+        return 0;
+    }
+
     ProcessList all_procs;
     process_list_init(&all_procs);
 
-    const char *target_proc_dir = custom_proc_dir ? custom_proc_dir : DEFAULT_PROC_DIR;
     if (scan_processes(&all_procs, target_proc_dir) != 0) {
         fprintf(stderr, "Error: Unable to access %s.\n", target_proc_dir);
         fprintf(stderr, "Note: Mini Anti-Cheat requires the Linux /proc filesystem.\n");

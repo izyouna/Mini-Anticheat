@@ -7,10 +7,10 @@
 
 ## 📌 สถานะปัจจุบัน (Current Status)
 
-- **Active Branch:** `main` (Merged `feature/game`)
-- **Current Phase:** Phase 3 Completed / Ready for Phase 4
+- **Active Branch:** `feature/launcher`
+- **Current Phase:** Phase 4 Completed / Ready for Phase 5
 - **Build Status:** Passing (`gcc -std=c11 -Wall -Wextra -Wpedantic -O2`)
-- **Test Status:** 12/12 Unit & Simulator Tests Passing (Scanner: 4, Detector: 5, Simulator: 3)
+- **Test Status:** 15/15 Unit, Detector, Simulator & Launcher Tests Passing
 
 ---
 
@@ -70,12 +70,12 @@
 ---
 
 ### Phase 4: Real-time Monitoring & Game Launcher
-> **Branch:** `feature/launcher` | **Status:** ⏳ รอเริ่มดำเนินงาน
-- [ ] **Task 4.1:** สร้างโมดูล Game Launcher (`include/game_launcher.h`, `src/game_launcher.c`)
-- [ ] **Task 4.2:** ใช้ System Calls `fork()` และ `execvp()` เพื่อรัน Game Simulator เป็น child process
-- [ ] **Task 4.3:** ติดตามสถานะของ child process ด้วย `waitpid()` พร้อม flag `WNOHANG`
-- [ ] **Task 4.4:** เชื่อมต่อ Inter-Process Communication (IPC) ด้วย `pipe()` หรือ `dup2()`
-- [ ] **Task 4.5:** พัฒนา Monitoring Loop สแกนระบบเป็นระยะ (Interval scan) และแจ้งเตือนแบบเรียลไทม์
+> **Branch:** `feature/launcher` | **Status:** ✅ เสร็จสิ้น
+- [x] **Task 4.1:** สร้างโมดูล Game Launcher (`include/game_launcher.h`, `src/game_launcher.c`)
+- [x] **Task 4.2:** ใช้ System Calls `fork()` และ `execvp()` เพื่อรัน Game Simulator เป็น child process
+- [x] **Task 4.3:** ติดตามสถานะของ child process ด้วย `waitpid()` พร้อม flag `WNOHANG`
+- [x] **Task 4.4:** เชื่อมต่อ Inter-Process Communication (IPC) ด้วย `pipe()` รับส่ง event จากตัวเกม
+- [x] **Task 4.5:** พัฒนา Monitoring Loop สแกนระบบเป็นระยะ (Interval scan) และแจ้งเตือนแบบเรียลไทม์ผ่าน CLI (`--launch`)
 
 ---
 
