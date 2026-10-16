@@ -1,5 +1,5 @@
 CC ?= gcc
-CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -O2 -Iinclude
+CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -O2 -Iinclude -D_POSIX_C_SOURCE=200809L -D_DEFAULT_SOURCE -D_DARWIN_C_SOURCE
 
 SRC_DIR = src
 INC_DIR = include
