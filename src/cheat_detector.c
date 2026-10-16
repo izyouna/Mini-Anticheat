@@ -107,8 +107,7 @@ DetectionResult evaluate_process(const ProcessInfo *proc) {
     }
 
     result.pid = proc->pid;
-    strncpy(result.name, proc->name, sizeof(result.name) - 1);
-    result.name[sizeof(result.name) - 1] = '\0';
+    snprintf(result.name, sizeof(result.name), "%s", proc->name);
 
     /* Rule 1: Check controlled cheat simulators (CONFIRMED_CHEAT) */
     for (size_t i = 0; CONFIRMED_CHEAT_TOOLS[i] != NULL; i++) {
