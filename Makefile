@@ -30,7 +30,7 @@ TEST_LOGGER_BIN = $(BUILD_DIR)/test_logger
 all: $(TARGET) $(GAME_TARGET) $(CHEAT_TARGET)
 
 $(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+	mkdir -p $(BUILD_DIR) logs
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
