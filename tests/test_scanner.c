@@ -43,8 +43,8 @@ static void create_mock_proc_entry(const char *base_dir, int pid, const char *na
     snprintf(dir_path, sizeof(dir_path), "%s/%d", base_dir, pid);
     mkdir(dir_path, 0755);
 
-    char status_path[512];
-    snprintf(status_path, sizeof(status_path), "%s/status", dir_path);
+    char status_path[1024];
+    snprintf(status_path, sizeof(status_path), "%s/%d/status", base_dir, pid);
     FILE *f = fopen(status_path, "w");
     assert(f != NULL);
     fprintf(f, "Name:\t%s\n", name);
