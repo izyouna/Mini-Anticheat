@@ -216,15 +216,13 @@ git --version
 Clone the repository:
 
 ```bash
-git clone https://github.com/USERNAME/mini-anticheat.git
+git clone https://github.com/izyouna/Mini-Anticheat.git
 ```
-
-Replace USERNAME with the repository owner's username.
 
 Navigate to the project:
 
 ```bash
-cd mini-anticheat
+cd Mini-Anticheat
 ```
 
 Build:
